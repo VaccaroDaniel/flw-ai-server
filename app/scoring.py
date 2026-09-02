@@ -87,18 +87,18 @@ def mock_speaking_score(transcript: str) -> EstimateResponse:
         cefr_level=level,
         total_score=score,
         rubric={
-            "task_completion": min(4, max(1, word_count // 25 + 1)),
-            "fluency": 2,
+            "semantic_relevance": min(4, max(1, word_count // 25 + 1)),
             "grammar": 2,
             "vocabulary": 2,
-            "pronunciation_proxy": 1,
+            "fluency": 2,
+            "pronunciation": 1,
         },
-        weak_kps=["spoken sentence building", "fluency", "pronunciation evidence"],
+        weak_kps=["semantic relevance", "spoken sentence building", "pronunciation evidence"],
         recommended_lessons=[
-            f"{level} Speaking: guided answers",
+            f"{level} Speaking: answer the task clearly",
             f"{level} Pronunciation: rhythm and stress",
         ],
-        teacher_note="Mock estimate based on transcript length only. Add Whisper metrics for pronunciation and fluency.",
+        teacher_note="Mock estimate based on transcript length only. Use Ollama mode for task-aware speaking scoring.",
         scoring_mode="mock",
     )
 

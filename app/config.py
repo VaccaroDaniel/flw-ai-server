@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     whisper_model: str = Field(default="tiny", alias="WHISPER_MODEL")
     whisper_device: str = Field(default="cpu", alias="WHISPER_DEVICE")
     whisper_compute_type: str = Field(default="int8", alias="WHISPER_COMPUTE_TYPE")
+    whisper_local_files_only: bool = Field(default=True, alias="WHISPER_LOCAL_FILES_ONLY")
     whisper_command: str = Field(default="", alias="WHISPER_COMMAND")
 
 

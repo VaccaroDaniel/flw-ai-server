@@ -24,13 +24,13 @@ async def transcribe_audio_bytes(settings: Settings, filename: str, content: byt
 
 
 @lru_cache(maxsize=2)
-def _load_faster_whisper_model(model_name: str, device: str, compute_type: str):
+def _load_faster_whisper_model(model_name: str, device: str, compute_type: str, local_files_only: bool):
     try:
         from faster_whisper import WhisperModel
     except ImportError as exc:
         raise TranscriptionError("faster-whisper is not installed. Run pip install -r requirements.txt.") from exc
 
-    return WhisperModel(model_name, device=device, compute_type=compute_type)
+    return WhisperModel(model_name, device=device, compute_type=compute_type, local_files_only=local_files_only)
 
 
 def _transcribe_with_faster_whisper(settings: Settings, filename: str, content: bytes) -> dict[str, str]:
@@ -43,6 +43,7 @@ def _transcribe_with_faster_whisper(settings: Settings, filename: str, content: 
             settings.whisper_model,
             settings.whisper_device,
             settings.whisper_compute_type,
+            settings.whisper_local_files_only,
         )
 
         try:
@@ -52,13 +53,16 @@ def _transcribe_with_faster_whisper(settings: Settings, filename: str, content: 
             raise TranscriptionError(str(exc)) from exc
 
         if not transcript:
-            raise TranscriptionError("Whisper returned an empty transcript.")
+            raise TranscriptionError(
+                "No speech was detected. Please record again, speak clearly, and make the recording at least 3 seconds long."
+            )
 
         return {
             "transcript": transcript,
             "filename": filename,
             "backend": "faster_whisper",
             "model": settings.whisper_model,
+            "local_files_only": str(settings.whisper_local_files_only).lower(),
             "language": info.language or "",
         }
 
@@ -101,7 +105,9 @@ async def _transcribe_with_command(settings: Settings, filename: str, content: b
             transcript = stdout.decode("utf-8", errors="replace").strip()
 
         if not transcript:
-            raise TranscriptionError("Whisper command returned an empty transcript.")
+            raise TranscriptionError(
+                "No speech was detected. Please record again, speak clearly, and make the recording at least 3 seconds long."
+            )
 
         return {
             "transcript": transcript,

@@ -32,3 +32,23 @@ class EstimateResponse(BaseModel):
     teacher_note: str = ""
     scoring_mode: str = "mock"
     raw_model_response: dict[str, Any] | None = None
+
+
+class RoleWaiterRequest(BaseModel):
+    userid: int = 0
+    courseid: int = 0
+    cmid: int = 0
+    model: str | None = None
+    character: str = "Waiter"
+    role: str = "Cafe waiter"
+    scenario: str = ""
+    cefr_level: str = "A1"
+    current_line: str = ""
+    learner_reply: str = ""
+    history: str = ""
+
+
+class RoleWaiterResponse(BaseModel):
+    line: str
+    intent: str = ""
+    raw_model_response: dict[str, Any] | None = None

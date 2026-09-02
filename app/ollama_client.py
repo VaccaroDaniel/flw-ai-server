@@ -78,9 +78,20 @@ async def generate_json(settings: Settings, prompt: str, model: str | None = Non
         },
     }
 
-    async with httpx.AsyncClient(timeout=settings.request_timeout_seconds) as client:
-        response = await client.post(url, json=payload)
-        response.raise_for_status()
+    try:
+        async with httpx.AsyncClient(timeout=settings.request_timeout_seconds) as client:
+            response = await client.post(url, json=payload)
+            response.raise_for_status()
+    except httpx.HTTPStatusError as exc:
+        body = exc.response.text.strip()
+        raise OllamaError(
+            f"Ollama generate failed for model '{selected_model}' at {url}: "
+            f"HTTP {exc.response.status_code}. {body}"
+        ) from exc
+    except httpx.HTTPError as exc:
+        raise OllamaError(
+            f"Could not generate with Ollama model '{selected_model}' at {url}: {exc}"
+        ) from exc
 
     data = response.json()
     model_text = data.get("response", "")

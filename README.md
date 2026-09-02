@@ -16,7 +16,7 @@ The server has two scoring modes:
 ## Setup
 
 ```powershell
-cd C:\Dev\MoodleWindowsInstaller-latest-501\server\flw-ai-server
+cd D:\Dev\MoodleWindowsInstaller-latest-501\server\flw-ai-server
 py -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt

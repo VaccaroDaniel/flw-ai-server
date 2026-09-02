@@ -1,0 +1,1 @@
+python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='Systran/faster-whisper-tiny', local_dir='../models/faster-whisper-tiny')"
